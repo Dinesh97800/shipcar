@@ -19,6 +19,12 @@
         <span class="menu-title">Enquiries</span>
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="<?php echo $APP_URL;?>dashboard/make-models.php">
+        <i class="menu-icon fa fa-user"></i>
+        <span class="menu-title">Make Models</span>
+      </a>
+    </li>
 
   </ul>
 </nav>

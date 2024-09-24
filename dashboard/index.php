@@ -1,6 +1,6 @@
 <?php
 include('./partials/headers.php');
-include(__DIR__.'/../Api/admin/index.php');
+include('/../Api/admin/index.php');
 
 ?>
 <div class="main-panel">
@@ -159,7 +159,7 @@ include(__DIR__.'/../Api/admin/index.php');
                     </div>
                   </div>
 
-                  <div class="row flex-grow">
+                  <!-- <div class="row flex-grow">
                     <div class="col-12 grid-margin stretch-card">
                       <div class="card card-rounded">
                         <div class="card-body">
@@ -345,7 +345,7 @@ include(__DIR__.'/../Api/admin/index.php');
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>

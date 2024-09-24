@@ -4,7 +4,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 $env_page = 'env.php';
 
-$APP_URL = 'http://localhost/shipCars/';
+$APP_URL = 'http://mobiblitz.com/shipcar/';
 $DB_NAME = "boligprosjekter";
 $DB_HOST = "localhost";
 $Password = "";

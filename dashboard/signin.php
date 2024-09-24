@@ -3,6 +3,7 @@
 <?php
 include(__DIR__ . '/../middlewares/index.php');
 include(__DIR__.'/../env.php');
+$APP_URL = "http://mobiblitz.com/shipcar/";
 
 ?>
 
