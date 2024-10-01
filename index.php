@@ -65,10 +65,10 @@ include('./Api/home.php');
 
                 <label for="car-type">Vehicle Type</label>
                 <select id="car-type" name="car_type" class="form-field">
-                <option value="" hidden selected>Select car type</option>
-                <option value="bike">Bike</option>
-                <option value="car">Car</option>
-                <option value="truck">Truck</option>
+                    <option value="" hidden selected>Select car type</option>
+                    <option value="0">Bike</option>
+                    <option value="1">Car</option>
+                    <option value="2">Truck</option>
 
                 </select>
 
@@ -93,8 +93,9 @@ include('./Api/home.php');
                     <label for="car-height">Car Height (cm)</label>
                     <input type="text" id="car-height" name="height_cm" class="form-field" placeholder="e.g. 180">
 
-                    <label for="car-weight" >Car Weight (kg)</label>
-                    <input type="text" style="margin-bottom:0px" id="car-weight" name="weight_kg" class="form-field" placeholder="e.g. 1200.0">
+                    <label for="car-weight">Car Weight (kg)</label>
+                    <input type="text" style="margin-bottom:0px" id="car-weight" name="weight_kg" class="form-field"
+                        placeholder="e.g. 1200.0">
                 </div>
 
                 <div>
@@ -163,7 +164,32 @@ include('./Api/home.php');
             });
 
         });
+        $('#car-type').on('change', function (e) {
+            e.preventDefault();
+            $('#make').empty();
+            const val = $(this).val();
 
+            const url = '<?php echo $APP_URL?>'
+            $.ajax({
+                url: `${url}Api/home.php`,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    type: val
+                },
+                success: function (data) {
+                    const makes = data.makes;
+                    $("#make").append('<option value="" hidden selected>Select Make</option>')
+                    for (var i in makes) {
+                        $("#make").append(new Option(makes[i].model, makes[i]
+                            .id));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                }
+            });
+        })
 
 
         $('#shipToCountry').on('change', function (e) {
@@ -172,7 +198,6 @@ include('./Api/home.php');
             $("#shipToPort").empty();
             const val = $(this).val();
             const url = '<?php echo $APP_URL?>'
-            // if (val !== 'others') {
             $.ajax({
                 url: `${url}Api/home.php`,
                 type: 'POST',
@@ -186,146 +211,83 @@ include('./Api/home.php');
                         $("#shipToPort").append(new Option(ports[i].name, ports[i]
                             .id));
                     }
-                    // $("#shipToPort").append('<option value="others">Other</option>')
                 },
                 error: function (xhr, status, error) {
                     console.error("Error: " + error);
                 }
             });
-            // } 
-            // else {
-            //     $('#shipToCountry').after(`<label id="shipToCountryAdd" for="shipToCountryAdd">Add Destination Country</label>
-            //     <input type="text" id="AddCountry" name="AddCountry" class="form-field">
-            //     <label id="shipToPortAdd" for="shipToPortAdd">Add Destination Port</label>
-            //     <input type="text" id="AddPort" name="AddPort" class="form-field">
-            //     <button class="btn btn-success" style="margin-botton:5px" type="button">Add</button>
-            //     `)
-            // }
+
         });
 
         $("#calculate").click(function () {
             var make = $("#make").val();
+            var model = $("#make option:selected").text();
             var destinationCountry = $("#shipToCountry").val();
+            var destinationPort = $("#shipToPort").val();
+            var email = $("#email").val();
 
-            // Check if user added a custom make or model
-            if (make && destinationCountry) {
-                if ($.isArray(make) && make.length === 1 && make[0].text) {
-                    console.log("New Make Added: " + make[0]);
-                } else {
-                    console.log("Selected Make: " + make);
-                }
-                console.log({
-                    make,
-                    destinationCountry
-                })
-                // Your existing AJAX call to get trims and calculate shipping cost...
+            // Check if the make is newly added (tagged)
+            var isCustomMake = $("#make option:selected").data('select2-tag') === true;
+            var isCustomCountry = $("#shipToCountry option:selected").data('select2-tag') === true;
+            var isCustomPort = $("#shipToPort option:selected").data('select2-tag') === true;
+
+            // Collect data based on whether it's a custom option
+            // Initialize formData
+            var formData = {
+                email: email,
+                car_type: $("#car-type").val(),
+            };
+
+            // Add make or new_make
+            if (isCustomMake) {
+                formData.new_make = model;
             } else {
-                alert("Please fill out all fields.");
+                formData.make = make;
             }
+
+            // Add country or new_country
+            if (isCustomCountry) {
+                formData.new_country = destinationCountry;
+            } else {
+                formData.country = destinationCountry;
+            }
+
+            // Add port or new_port
+            if (isCustomPort) {
+                formData.new_port = destinationPort;
+            } else {
+                formData.port = destinationPort;
+            }
+
+            // Add custom dimensions if they are visible
+            if ($("#custom-dimensions").is(":visible")) {
+                formData.length_cm = $("#car-length").val();
+                formData.width_cm = $("#car-width").val();
+                formData.height_cm = $("#car-height").val();
+                formData.weight_kg = $("#car-weight").val();
+            }
+
+
+            const url = '<?php echo $APP_URL?>'
+
+            $.ajax({
+                url: `${url}generateEnquiry.php`,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    ...formData
+                },
+                success: function (response) {
+                    window.location.href = "success.php"
+                },
+                error: function (xhr, status, error) {
+                    window.location.href = "success.php"
+                }
+            });
+
+
+
         });
-
-
-
-        // Populate car makes dynamically
-        // $.getJSON("https://www.carqueryapi.com/api/0.3/?callback=?", {
-        //     cmd: "getMakes",
-        //     year: "2020"
-        // }, function (data) {
-        //     var makes = data.Makes;
-        //     for (var i in makes) {
-        //         $("#make").append(new Option(makes[i].make_display, makes[i].make));
-        //     }
-        // });
-
-        // Populate car models based on selected make
-        // $("#make").change(function () {
-        //     var make = $(this).val();
-        //     $("#model").empty().append(new Option("Select Model", ""));
-        //     $.getJSON("https://www.carqueryapi.com/api/0.3/?callback=?", {
-        //         cmd: "getModels",
-        //         make: make
-        //     }, function (data) {
-        //         var models = data.Models;
-        //         for (var i in models) {
-        //             $("#model").append(new Option(models[i].model_name, models[i].model_name));
-        //         }
-        //     });
-        // });
-
-
-        // Fetch car details and calculate shipping cost
-        // $("#calculate").click(function () {
-        //     var make = $("#make").val();
-        //     var model = $("#model").val();
-        //     // var sourceCountry = $("#shipFromCountry").val();
-        //     var destinationCountry = $("#shipToCountry").val();
-
-        //     if (make && model && destinationCountry) {
-        //         $.getJSON("https://www.carqueryapi.com/api/0.3/?callback=?", {
-        //             cmd: "getTrims",
-        //             make: make,
-        //             model: model
-        //         }, function (data) {
-        //             if (data.Trims.length > 0) {
-        //                 var trim = data.Trims[0];
-
-        //                 // Default values in case data is missing
-        //                 var default_length = 4.5; // 4.5 meters
-        //                 var default_width = 1.8; // 1.8 meters
-        //                 var default_height = 1.4; // 1.4 meters
-
-        //                 // Use API values if available, otherwise fallback to defaults
-        //                 var length = trim.model_length_mm ? (trim.model_length_mm / 1000).toFixed(2) :
-        //                     default_length;
-        //                 var width = trim.model_width_mm ? (trim.model_width_mm / 1000).toFixed(2) :
-        //                     default_width;
-        //                 var height = trim.model_height_mm ? (trim.model_height_mm / 1000).toFixed(2) :
-        //                     default_height;
-
-        //                 var volume = (length * width * height).toFixed(2);
-
-
-        //                 // Prepare data to send to PDF generation script
-        //                 var postData = {
-        //                     make: make,
-        //                     model: model,
-        //                     destinationCountry: destinationCountry,
-        //                     length: length,
-        //                     width: width,
-        //                     height: height,
-        //                     volume: volume,
-        //                     // shippingCost: shipping_cost,
-        //                     email: $('#email').val()
-        //                 };
-
-        //                 // Send data to PHP script to generate PDF
-        //                 // $.post('generate_pdf.php', postData);
-        //                 $.ajax({
-        //                     url: 'generate_pdf_new.php',
-        //                     type: 'POST',
-        //                     data: JSON.stringify(postData),
-        //                     success: function (response) {
-        //                         const res = typeof response === "string" ? JSON.parse(
-        //                             response) : response
-        //                         console.log(res);
-        //                         if (res.status === true) {
-        //                             window.location.href = "success.php"
-        //                         }
-        //                         // Handle the response, e.g., show a success message or handle the PDF file
-        //                     },
-        //                     error: function (error) {
-        //                         console.error("Error:", error);
-        //                     }
-        //                 });
-
-        //             } else {
-        //                 $("#car-details").html("<p>No car data found.</p>");
-        //             }
-        //         });
-        //     } else {
-        //         alert("Please fill out all fields.");
-        //     }
-        // });
     </script>
 </body>
 

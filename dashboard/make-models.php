@@ -5,6 +5,13 @@ include(__DIR__ . '/../Api/admin/make-models.php');
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 <!-- DataTables Responsive CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css">
+<!-- Spinner Loader (Bootstrap) -->
+<div id="loader" class="d-none text-center">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
 <div class="main-panel">
     <div class="content-wrapper">
         <div class="row">
@@ -41,6 +48,7 @@ include(__DIR__ . '/../Api/admin/make-models.php');
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/settings.js"></script>
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/hoverable-collapse.js"></script>
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/todolist.js"></script>
+<script src="<?php echo $APP_URL; ?>dashboard/common.js"></script>
 <!-- endinject -->
 <!-- Custom js for this page-->
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/jquery.cookie.js" type="text/javascript"></script>
@@ -99,6 +107,11 @@ include(__DIR__ . '/../Api/admin/make-models.php');
         </div>
     </div>
 </div>
+
+
+<!-- are you sure modal -->
+
+<!-- end -->
 <script>
     $(document).ready(function() {
         // Allow only numbers in the specified input fields
@@ -107,7 +120,10 @@ include(__DIR__ . '/../Api/admin/make-models.php');
             this.value = this.value.replace(/(\..*)\./g, '$1');
 
         });
+        
     });
+
+
 </script>
 
 

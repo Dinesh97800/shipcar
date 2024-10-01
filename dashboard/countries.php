@@ -33,7 +33,7 @@ include(__DIR__ . '/../Api/admin/countries.php');
                         <div class="table-responsive pt-3">
 
                             <?php
-                            $tableColumn = ['#', 'Country Name', 'Created', 'Action'];
+                            $tableColumn = ['#', 'Country Name', 'Created', 'Status', 'Action'];
                             include('./table.php');
                             ?>
                         </div>
@@ -53,6 +53,7 @@ include(__DIR__ . '/../Api/admin/countries.php');
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/settings.js"></script>
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/hoverable-collapse.js"></script>
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/todolist.js"></script>
+<script src="<?php echo $APP_URL; ?>dashboard/common.js"></script>
 <!-- endinject -->
 <!-- Custom js for this page-->
 <script src="<?php echo $APP_URL; ?>dashboard/assets/js/jquery.cookie.js" type="text/javascript"></script>
@@ -120,6 +121,7 @@ include(__DIR__ . '/../Api/admin/countries.php');
                             <tr>
                                 <th>Sr. No</th>
                                 <th>Name</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -179,16 +181,25 @@ include(__DIR__ . '/../Api/admin/countries.php');
         var tableBody = $('.portTableBody');
         tableBody.empty(); // Clear the table before appending new rows
 
-        $.each(ports, function(index, port) {
-            var row = $('<tr>');
-            row.append('<td>' + (index + 1) + '</td>');
-            row.append('<td>' + port.name + '</td>');
-            row.append('<td>' +
-                '<button class="btn btn-primary btn-sm edit-port-btn" data-name="'+port.name+'" data-id="' + port.id + '">Edit</button> ' +
-                '<button class="btn btn-danger btn-sm delete-port-btn" data-id="' + port.id + '">Delete</button>' +
-                '</td>');
-            tableBody.append(row);
-        });
+            $.each(ports, function(index, port) {
+                var row = $('<tr>'); 
+
+                row.append('<td>' + (index + 1) + '</td>');
+                row.append('<td>' + port.name + '</td>');
+
+                // Correct status toggle and escaping
+                var status = port.status === 'active' ? 'inactive' : 'active';
+                row.append(`<td><span data-type="model" data-id="${port.id}" data-status="${status}" class="btn updateStatus btn-${port.status === 'active'? 'success' : 'danger'}">${port.status}</span></td>`);
+
+                // Add edit and delete buttons
+                row.append('<td>' +
+                    '<button class="btn btn-primary btn-sm edit-port-btn" data-name="' + port.name + '" data-id="' + port.id + '">Edit</button> ' +
+                    '<button class="btn btn-danger btn-sm delete-port-btn" data-id="' + port.id + '">Delete</button>' +
+                    '</td>');
+
+                tableBody.append(row);
+            });
+
 
         // Initialize DataTable
         $('#portTable').DataTable();

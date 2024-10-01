@@ -67,6 +67,7 @@
             font-size: 14px;
             /* Adjust text size */
             background-color: transparent;
+            cursor: pointer;
             /* Optional: change background color */
         }
 
@@ -107,7 +108,11 @@
                     <td> <?php echo $counter++; ?> </td>
                     <td> <?php echo htmlspecialchars($country['name']); ?> </td>
                     <td><?php echo date('d/m/Y', strtotime($country['created_at'])); ?></td>
-
+                    <td>
+                        <button data-type="country" data-id="<?php echo $country['id']; ?>" data-status="<?php echo $country['status'] == 'active' ? 'inactive' : 'active'; ?>" class="btn btn-<?php echo ($model['status'] === 'active') ? 'success' : 'danger'; ?> updateStatus">
+                            <?php echo htmlspecialchars($country['status']); ?>
+                        </button>
+                    </td>
                     <td>
                         <div class="d-flex">
                             <a type="button" class="btn btn-dark btn-rounded btn-fw me-2 edit-country-btn"
@@ -168,8 +173,14 @@
                     <td><?php echo htmlspecialchars($model['width_cm']); ?></td>
                     <td><?php echo htmlspecialchars($model['height_cm']); ?></td>
                     <td><?php echo htmlspecialchars($model['weight_kg']); ?></td>
-                    <td>
-                        <span class="<?php echo htmlspecialchars($model['status']); ?>-btn"><?php echo htmlspecialchars($model['status']); ?></span>
+                    <td class='text-center'>
+                        <!-- <span data-type="model" data-id="<?php echo $model['id']; ?>" data-status="<?php echo $model['status'] == 'active' ? 'inactive' : 'active'; ?>" class="<?php echo htmlspecialchars($model['status']); ?>-btn updateStatus"><?php echo htmlspecialchars($model['status']); ?></span> -->
+
+                        <button data-type="model" data-id="<?php echo $model['id']; ?>" data-status="<?php echo $model['status'] == 'active' ? 'inactive' : 'active'; ?>" class="btn updateStatus btn-<?php echo ($model['status'] === 'active') ? 'success' : 'danger'; ?>">
+                            <?php echo htmlspecialchars($model['status']); ?>
+                        </button>
+
+
                     </td>
                     <td>
                         <div class="d-flex">
@@ -184,3 +195,23 @@
         ?>
     </tbody>
 </table>
+<div class="modal fade" id="statusConfirmModal" tabindex="-1" role="dialog" aria-labelledby="statusConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="statusConfirmModalLabel">Confirm Action</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to change the status of this item?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmStatusChange">Yes, Change Status</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    var ajaxUrl = '<?php echo $APP_URL ?>'
+</script>
