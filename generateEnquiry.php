@@ -168,8 +168,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );    
     // echo json_encode(array_merge(['status' => true, 'message' => 'PDF created and email sent successfully.'], $responseArray));
      // Return JSON response
-     echo json_encode($response);
-     $con->close();
+    //  echo json_encode($response);
+    header("Location: success.php?total_cost=" . urlencode($total_cost));
+    // $con->close();
 
 }
 

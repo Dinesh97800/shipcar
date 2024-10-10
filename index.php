@@ -69,6 +69,8 @@ include('./Api/home.php');
                     <option value="0">Bike</option>
                     <option value="1">Car</option>
                     <option value="2">Truck</option>
+                    <option value="3">Van</option>
+                    <option value="4">Machinery</option>
 
                 </select>
 
@@ -168,27 +170,39 @@ include('./Api/home.php');
             e.preventDefault();
             $('#make').empty();
             const val = $(this).val();
-
-            const url = '<?php echo $APP_URL?>'
-            $.ajax({
-                url: `${url}Api/home.php`,
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    type: val
-                },
-                success: function (data) {
-                    const makes = data.makes;
-                    $("#make").append('<option value="" hidden selected>Select Make</option>')
-                    for (var i in makes) {
-                        $("#make").append(new Option(makes[i].model, makes[i]
-                            .id));
+            if(val < 2){
+                $('#make').show();
+                $('label[for="car-makes"]').show();
+                $('select[name="model"]').select2({
+                    tags: true,
+                    placeholder: "Select OR Add Make",
+                    allowClear: false
+                });
+                const url = '<?php echo $APP_URL?>'
+                $.ajax({
+                    url: `${url}Api/home.php`,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        type: val
+                    },
+                    success: function (data) {
+                        const makes = data.makes;
+                        $("#make").append('<option value="" hidden selected>Select Make</option>')
+                        for (var i in makes) {
+                            $("#make").append(new Option(makes[i].model, makes[i]
+                                .id));
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error: " + error);
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error: " + error);
-                }
-            });
+                });
+            }else{
+                $('#make').hide();
+                $('label[for="car-makes"]').hide();
+                $('select[name="model"]').select2('destroy'); 
+            }
         })
 
 
@@ -278,10 +292,10 @@ include('./Api/home.php');
                     ...formData
                 },
                 success: function (response) {
-                    window.location.href = "success.php"
+                    // window.location.href = "success.php"
                 },
                 error: function (xhr, status, error) {
-                    window.location.href = "success.php"
+                    // window.location.href = "success.php"
                 }
             });
 
